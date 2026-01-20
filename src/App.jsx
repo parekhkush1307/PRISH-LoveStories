@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import ATAPI from "./assets/atapii.jpeg";
-import KISS from "./assets/Long_kiss.jpeg";
-import CAFE from "./assets/Indian_cafe.jpeg";
+import KISS from "./assets/long_kisses.jpeg";
+import CAFE from "./assets/cafe.jpeg";
 import DIWALI from "./assets/before_diwali.jpeg";
-import PENDENT from "./assets/pendent_day.jpeg";
-import BDAY from "./assets/your_birthday.jpeg";
+import PENDENT from "./assets/pendent_days.jpeg";
+import BDAY from "./assets/birthday.jpeg";
 
 const cardsData = [
   { img: BDAY, text: "This day and date is my one of the most special..." },
