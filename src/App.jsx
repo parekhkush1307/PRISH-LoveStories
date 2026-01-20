@@ -20,6 +20,7 @@ export default function App() {
   const [started, setStarted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [showFinal, setShowFinal] = useState(false);
+
   const startX = useRef(0);
   const startY = useRef(0);
 
@@ -34,14 +35,13 @@ export default function App() {
     const diffX = e.changedTouches[0].screenX - startX.current;
     const diffY = e.changedTouches[0].screenY - startY.current;
 
-    // limit drag so other cards are visible
-    const limitedX = Math.max(Math.min(diffX, 80), -80);
+    const limitedX = Math.max(Math.min(diffX, 60), -60);
     const limitedY = Math.max(Math.min(diffY, 120), 0);
 
     e.currentTarget.style.transform = `
       translateX(${limitedX}px)
       translateY(${limitedY}px)
-      rotate(${limitedX / 18}deg)
+      rotate(${limitedX / 20}deg)
     `;
   };
 
@@ -51,47 +51,29 @@ export default function App() {
     const diffY = e.changedTouches[0].screenY - startY.current;
     const card = e.currentTarget;
 
-    // swipe DOWN threshold
     if (diffY > 100) {
+      // current card goes down
       card.classList.add(
         "transition-all",
-        "duration-400",
+        "duration-300",
         "opacity-0",
         "translate-y-[200%]",
         "rotate-[8deg]"
       );
 
-      createConfetti();
-
       setTimeout(() => {
         setCurrent((p) => p + 1);
-      }, 350);
+      }, 300);
     } else {
-      // snap back
       card.style.transform = "";
     }
   };
 
   useEffect(() => {
     if (current >= cardsData.length) {
-      setTimeout(() => setShowFinal(true), 500);
+      setTimeout(() => setShowFinal(true), 400);
     }
   }, [current]);
-
-  const createConfetti = () => {
-    for (let i = 0; i < 10; i++) {
-      setTimeout(() => {
-        const heart = document.createElement("div");
-        heart.innerHTML = ["💕", "💖", "💗", "💝"][Math.floor(Math.random() * 4)];
-        heart.className =
-          "fixed text-2xl pointer-events-none animate-[confetti_3s_ease-out_forwards]";
-        heart.style.left = Math.random() * 100 + "%";
-        heart.style.top = Math.random() * 30 + "%";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 3000);
-      }, i * 50);
-    }
-  };
 
   return (
     <div className="font-['Comic_Sans_MS'] bg-pink-50 min-h-screen overflow-hidden">
@@ -118,40 +100,48 @@ export default function App() {
       {/* GALLERY */}
       <div className="flex justify-center items-center min-h-screen p-6 relative">
         <div className="relative w-full max-w-[400px] h-[550px]">
-          {cardsData.map((card, index) => (
-            <div
-              key={index}
-              onTouchStart={handleTouchStart}
-              onTouchMove={(e) => handleTouchMove(e, index)}
-              onTouchEnd={(e) => handleTouchEnd(e, index)}
-              className={`absolute w-full bg-white p-4 pb-16 rounded shadow-2xl cursor-grab transition-all duration-500 ${
-                index !== current ? "pointer-events-none" : ""
-              }`}
-              style={{
-                zIndex: cardsData.length - index,
-                transform: `rotate(${index * (index % 2 ? -2 : 2)}deg) translateY(${index * 10}px)`,
-              }}
-            >
-              <img
-                src={card.img}
-                className="w-full h-[400px] object-cover rounded"
-              />
-              <div className="absolute bottom-4 left-4 right-4 text-center font-bold text-gray-700 rotate-[-2deg]">
-                {card.text}
+          {cardsData.map((card, index) => {
+            const offset = index - current;
+
+            return (
+              <div
+                key={index}
+                onTouchStart={handleTouchStart}
+                onTouchMove={(e) => handleTouchMove(e, index)}
+                onTouchEnd={(e) => handleTouchEnd(e, index)}
+                className={`absolute w-full bg-white p-4 pb-16 rounded shadow-2xl cursor-grab transition-all duration-500 ${
+                  index !== current ? "pointer-events-none" : ""
+                }`}
+                style={{
+                  zIndex: cardsData.length - index,
+                  transform: `
+                    translateY(${offset * 14}px)
+                    scale(${offset === 0 ? 1 : 0.96})
+                  `,
+                  opacity: offset < 0 ? 0 : 1,
+                }}
+              >
+                <img
+                  src={card.img}
+                  className="w-full h-[400px] object-cover rounded"
+                />
+                <div className="absolute bottom-4 left-4 right-4 text-center font-bold text-gray-700 rotate-[-2deg]">
+                  {card.text}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="fixed bottom-12 left-1/2 -translate-x-1/2 text-pink-500 font-bold text-xl animate-bounce">
-          Swipe down the memories 💕
+          Swipe down 💕
         </div>
       </div>
 
       {/* FINAL MESSAGE */}
       {showFinal && (
         <div className="fixed inset-0 flex items-center justify-center">
-          <div className="text-center scale-100 opacity-100 transition">
+          <div className="text-center">
             <h2 className="text-5xl text-pink-500 font-bold drop-shadow mb-4">
               All done! 💖
             </h2>
