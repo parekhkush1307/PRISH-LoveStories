@@ -29,20 +29,22 @@ export default function App() {
   const handleTouchMove = (e, index) => {
     if (index !== current) return;
     const diff = e.changedTouches[0].screenX - startX.current;
-    e.currentTarget.style.transform = `translateX(${diff}px) rotate(${diff / 10}deg)`;
+    const image = e.currentTarget.querySelector(".polaroid-image-wrapper");
+
+    image.style.transform = `translateX(${diff}px) rotate(${diff / 10}deg)`;
   };
 
   const handleTouchEnd = (e, index) => {
     if (index !== current) return;
     const diff = e.changedTouches[0].screenX - startX.current;
-    const card = e.currentTarget;
+    const image = e.currentTarget.querySelector(".polaroid-image-wrapper");
 
     if (Math.abs(diff) > 100) {
-      card.classList.add(diff > 0 ? "swiped-right" : "swiped-left");
+      image.classList.add(diff > 0 ? "swipe-img-right" : "swipe-img-left");
       createConfetti();
       setTimeout(() => setCurrent((p) => p + 1), 300);
     } else {
-      card.style.transform = "";
+      image.style.transform = "";
     }
   };
 
@@ -105,7 +107,10 @@ export default function App() {
                 transform: `rotate(${index * (index % 2 ? -2 : 2)}deg) translateY(${index * 10}px)`,
               }}
             >
-              <img src={card.img} className="polaroid-image" />
+              <div className="polaroid-image-wrapper">
+                <img src={card.img} className="polaroid-image" />
+              </div>
+
               <div className="polaroid-text">{card.text}</div>
             </div>
           ))}
