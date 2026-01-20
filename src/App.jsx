@@ -32,6 +32,9 @@ export default function App() {
   const handleTouchMove = (e, index) => {
     if (index !== current) return;
 
+    // 🚫 prevent pull-to-refresh
+    e.preventDefault();
+
     const diffX = e.changedTouches[0].screenX - startX.current;
     const diffY = e.changedTouches[0].screenY - startY.current;
 
@@ -52,7 +55,7 @@ export default function App() {
     const card = e.currentTarget;
 
     if (diffY > 100) {
-      // current card goes down
+      // card exits DOWN
       card.classList.add(
         "transition-all",
         "duration-300",
@@ -76,7 +79,7 @@ export default function App() {
   }, [current]);
 
   return (
-    <div className="font-['Comic_Sans_MS'] bg-pink-50 min-h-screen overflow-hidden">
+    <div className="font-['Comic_Sans_MS'] bg-pink-50 min-h-screen overflow-hidden overscroll-none touch-none">
       {/* POPUP */}
       <div
         className={`fixed inset-0 flex items-center justify-center bg-gradient-to-br from-pink-300 to-pink-100 z-50 transition-all duration-700 ${
