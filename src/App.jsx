@@ -21,48 +21,51 @@ export default function App() {
   const [current, setCurrent] = useState(0);
   const [showFinal, setShowFinal] = useState(false);
   const startX = useRef(0);
+  const startY = useRef(0);
 
   const handleTouchStart = (e) => {
     startX.current = e.changedTouches[0].screenX;
+    startY.current = e.changedTouches[0].screenY;
   };
 
   const handleTouchMove = (e, index) => {
     if (index !== current) return;
 
-    const diff = e.changedTouches[0].screenX - startX.current;
+    const diffX = e.changedTouches[0].screenX - startX.current;
+    const diffY = e.changedTouches[0].screenY - startY.current;
 
-    // limit drag so underlying cards stay visible
-    const limited = Math.max(Math.min(diff, 120), -120);
+    // limit drag so other cards are visible
+    const limitedX = Math.max(Math.min(diffX, 80), -80);
+    const limitedY = Math.max(Math.min(diffY, 120), 0);
 
     e.currentTarget.style.transform = `
-      translateX(${limited}px)
-      translateY(${Math.abs(limited) / 4}px)
-      rotate(${limited / 15}deg)
+      translateX(${limitedX}px)
+      translateY(${limitedY}px)
+      rotate(${limitedX / 18}deg)
     `;
   };
 
   const handleTouchEnd = (e, index) => {
     if (index !== current) return;
 
-    const diff = e.changedTouches[0].screenX - startX.current;
+    const diffY = e.changedTouches[0].screenY - startY.current;
     const card = e.currentTarget;
 
-    if (Math.abs(diff) > 100) {
-      // FULL EXIT OFF SCREEN
+    // swipe DOWN threshold
+    if (diffY > 100) {
       card.classList.add(
         "transition-all",
-        "duration-300",
+        "duration-400",
         "opacity-0",
-        diff > 0
-          ? "translate-x-[200%] rotate-[25deg]"
-          : "-translate-x-[200%] -rotate-[25deg]"
+        "translate-y-[200%]",
+        "rotate-[8deg]"
       );
 
       createConfetti();
 
       setTimeout(() => {
         setCurrent((p) => p + 1);
-      }, 300);
+      }, 350);
     } else {
       // snap back
       card.style.transform = "";
@@ -141,7 +144,7 @@ export default function App() {
         </div>
 
         <div className="fixed bottom-12 left-1/2 -translate-x-1/2 text-pink-500 font-bold text-xl animate-bounce">
-          Swipe the memories!! 💕
+          Swipe down the memories 💕
         </div>
       </div>
 
