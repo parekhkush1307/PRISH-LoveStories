@@ -31,7 +31,7 @@ export default function App() {
 
     const diff = e.changedTouches[0].screenX - startX.current;
 
-    // limit movement so next cards are visible
+    // limit drag so underlying cards stay visible
     const limited = Math.max(Math.min(diff, 120), -120);
 
     e.currentTarget.style.transform = `
@@ -48,13 +48,14 @@ export default function App() {
     const card = e.currentTarget;
 
     if (Math.abs(diff) > 100) {
+      // FULL EXIT OFF SCREEN
       card.classList.add(
         "transition-all",
         "duration-300",
         "opacity-0",
         diff > 0
-          ? "translate-x-[140%] rotate-[20deg]"
-          : "-translate-x-[140%] -rotate-[20deg]"
+          ? "translate-x-[200%] rotate-[25deg]"
+          : "-translate-x-[200%] -rotate-[25deg]"
       );
 
       createConfetti();
@@ -63,6 +64,7 @@ export default function App() {
         setCurrent((p) => p + 1);
       }, 300);
     } else {
+      // snap back
       card.style.transform = "";
     }
   };
