@@ -8,12 +8,12 @@ import PENDENT from "./assets/pendent_days.jpeg";
 import BDAY from "./assets/birthday.jpeg";
 
 const cardsData = [
-  { img: BDAY, text: "This day and date is my one of the most special..." },
-  { img: PENDENT, text: "This is the best day of my life..." },
-  { img: DIWALI, text: "At this day we planned to go to the Victoria..." },
-  { img: CAFE, text: "This was the perfect day..." },
-  { img: KISS, text: "At this day we have kissed each other..." },
-  { img: ATAPI, text: "At this day we have spent each and every together ❤️" },
+  { img: BDAY, text: "This day and date is one of my most special days because it was your birthday and our first photos together ❤️" },
+  { img: PENDENT, text: "This is the best day of my life when I gave you that pendent which looked so beautiful on you💞." },
+  { img: DIWALI, text: "At this day we planned to go to Victoria before Diwali and spent such a lovely time together💝" },
+  { img: CAFE, text: "This was the perfect day when we met at Indian Cafe after such a long break💗." },
+  { img: KISS, text: "That day we kissed and stayed close, never wanting to move away from each other💕." },
+  { img: ATAPI, text: "This day we spent every moment together and we never wanted to say goodbye💖" },
 ];
 
 export default function App() {
