@@ -1,20 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import "./App.css";
 
-import ATAPI from "./assets/ATAPI.jpeg";
-import KISS from "./assets/OUR_FIRST_KISS.jpeg";
-import CAFE from "./assets/INDIAN_CAFE.jpeg";
-import DIWALI from "./assets/BEFORE_DIWALI_MEET.jpeg";
-import PENDENT from "./assets/PENDENT_DAY.jpeg";
-import BDAY from "./assets/YOUR_BIRTHDAY.jpeg";
+import ATAPI from "./assets/atapii.jpeg";
+import KISS from "./assets/Long_kiss.jpeg";
+import CAFE from "./assets/Indian_cafe.jpeg";
+import DIWALI from "./assets/before_diwali.jpeg";
+import PENDENT from "./assets/pendent_day.jpeg";
+import BDAY from "./assets/your_birthday.jpeg";
 
 const cardsData = [
-  { img: BDAY, text: "This day and date is my one of the most special and favourite because it was our first time that we clicked our photos and main thing it was you birthdayyyyyyy." },
-  { img: PENDENT, text: "This is the best day of my life when I had gave you pendent which was looking so good at you." },
-  { img: DIWALI, text: "At this day we planned to go to the Victoria before the diwali and had spend so good time with each other." },
-  { img: CAFE, text: "This was the perfect day where we decided to meet at the indian cafe after a very long break." },
-  { img: KISS, text: "At this day we have kissed each other so hard that we never wanna move away from each other." },
-  { img: ATAPI, text: "At this day we have spent each and every together, and loved each other so much ❤️" },
+  { img: BDAY, text: "This day and date is my one of the most special..." },
+  { img: PENDENT, text: "This is the best day of my life..." },
+  { img: DIWALI, text: "At this day we planned to go to the Victoria..." },
+  { img: CAFE, text: "This was the perfect day..." },
+  { img: KISS, text: "At this day we have kissed each other..." },
+  { img: ATAPI, text: "At this day we have spent each and every together ❤️" },
 ];
 
 export default function App() {
@@ -41,9 +40,7 @@ export default function App() {
     if (Math.abs(diff) > 100) {
       card.classList.add(diff > 0 ? "swiped-right" : "swiped-left");
       createConfetti();
-      setTimeout(() => {
-        setCurrent((prev) => prev + 1);
-      }, 300);
+      setTimeout(() => setCurrent((p) => p + 1), 300);
     } else {
       card.style.transform = "";
     }
@@ -70,29 +67,43 @@ export default function App() {
   };
 
   return (
-    <>
-      {!started && (
-        <div className="popup-overlay">
-          <div className="popup-content">
-            <div className="popup-heart">💕</div>
-            <h1 className="popup-title">Hey You!</h1>
-            <button className="popup-btn" onClick={() => setStarted(true)}>
-              Tap Here 💝
-            </button>
-          </div>
+    <div className="font-['Comic_Sans_MS'] bg-pink-50 min-h-screen overflow-hidden">
+      {/* POPUP */}
+      <div
+        className={`fixed inset-0 flex items-center justify-center bg-gradient-to-br from-pink-300 to-pink-100 z-50 transition-all duration-700 ${
+          started ? "opacity-0 scale-150 pointer-events-none" : ""
+        }`}
+      >
+        <div className="text-center animate-floatIn">
+          <div className="text-7xl animate-heartbeat mb-4">💕</div>
+          <h1 className="text-5xl text-white font-bold drop-shadow mb-8">
+            Hey You!
+          </h1>
+          <button
+            onClick={() => setStarted(true)}
+            className="px-12 py-5 bg-white text-pink-500 text-2xl font-bold rounded-full shadow-xl animate-glow active:scale-95"
+          >
+            Tap Here 💝
+          </button>
         </div>
-      )}
+      </div>
 
-      <div className="gallery-wrapper">
-        <div className="polaroid-stack">
+      {/* GALLERY */}
+      <div className="flex justify-center items-center min-h-screen p-6 relative">
+        <div className="relative w-full max-w-[400px] h-[550px]">
           {cardsData.map((card, index) => (
             <div
               key={index}
-              className="polaroid"
-              style={{ zIndex: cardsData.length - index }}
               onTouchStart={handleTouchStart}
               onTouchMove={(e) => handleTouchMove(e, index)}
               onTouchEnd={(e) => handleTouchEnd(e, index)}
+              className={`polaroid absolute w-full ${
+                index !== current ? "pointer-events-none" : ""
+              }`}
+              style={{
+                zIndex: cardsData.length - index,
+                transform: `rotate(${index * (index % 2 ? -2 : 2)}deg) translateY(${index * 10}px)`,
+              }}
             >
               <img src={card.img} className="polaroid-image" />
               <div className="polaroid-text">{card.text}</div>
@@ -103,12 +114,13 @@ export default function App() {
         <div className="instructions">Swipe the memories!! 💕</div>
       </div>
 
+      {/* FINAL MESSAGE */}
       {showFinal && (
         <div className="final-message show">
           <h2>All done! 💖</h2>
           <p>I can’t stay without you. Please stay with me.</p>
         </div>
       )}
-    </>
+    </div>
   );
 }
