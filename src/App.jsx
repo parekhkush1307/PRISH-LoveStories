@@ -9,11 +9,11 @@ import BDAY from "./assets/birthday.jpeg";
 
 const cardsData = [
   { img: BDAY, text: "This day and date is one of my most special days because it was your birthday and our first photos together ❤️" },
-  { img: PENDENT, text: "This is the best day of my life when I gave you that pendent which looked so beautiful on you💞." },
-  { img: DIWALI, text: "At this day we planned to go to Victoria before Diwali and spent such a lovely time together💝" },
-  { img: CAFE, text: "This was the perfect day when we met at Indian Cafe after such a long break💗." },
-  { img: KISS, text: "That day we kissed and stayed close, never wanting to move away from each other💕." },
-  { img: ATAPI, text: "This day we spent every moment together and we never wanted to say goodbye💖" },
+  { img: PENDENT, text: "This is the best day of my life when I gave you that pendent which looked so beautiful on you 💞" },
+  { img: DIWALI, text: "At this day we planned to go to Victoria before Diwali and spent such a lovely time together 💝" },
+  { img: CAFE, text: "This was the perfect day when we met at Indian Cafe after such a long break 💗" },
+  { img: KISS, text: "That day we kissed and stayed close, never wanting to move away from each other 💕" },
+  { img: ATAPI, text: "This day we spent every moment together and never wanted to say goodbye 💖" },
 ];
 
 export default function App() {
@@ -28,23 +28,42 @@ export default function App() {
 
   const handleTouchMove = (e, index) => {
     if (index !== current) return;
-    const diff = e.changedTouches[0].screenX - startX.current;
-    const image = e.currentTarget.querySelector(".polaroid-image-wrapper");
 
-    image.style.transform = `translateX(${diff}px) rotate(${diff / 10}deg)`;
+    const diff = e.changedTouches[0].screenX - startX.current;
+
+    // limit movement so next cards are visible
+    const limited = Math.max(Math.min(diff, 120), -120);
+
+    e.currentTarget.style.transform = `
+      translateX(${limited}px)
+      translateY(${Math.abs(limited) / 4}px)
+      rotate(${limited / 15}deg)
+    `;
   };
 
   const handleTouchEnd = (e, index) => {
     if (index !== current) return;
+
     const diff = e.changedTouches[0].screenX - startX.current;
-    const image = e.currentTarget.querySelector(".polaroid-image-wrapper");
+    const card = e.currentTarget;
 
     if (Math.abs(diff) > 100) {
-      image.classList.add(diff > 0 ? "swipe-img-right" : "swipe-img-left");
+      card.classList.add(
+        "transition-all",
+        "duration-300",
+        "opacity-0",
+        diff > 0
+          ? "translate-x-[140%] rotate-[20deg]"
+          : "-translate-x-[140%] -rotate-[20deg]"
+      );
+
       createConfetti();
-      setTimeout(() => setCurrent((p) => p + 1), 300);
+
+      setTimeout(() => {
+        setCurrent((p) => p + 1);
+      }, 300);
     } else {
-      image.style.transform = "";
+      card.style.transform = "";
     }
   };
 
@@ -58,8 +77,9 @@ export default function App() {
     for (let i = 0; i < 10; i++) {
       setTimeout(() => {
         const heart = document.createElement("div");
-        heart.className = "confetti-heart";
         heart.innerHTML = ["💕", "💖", "💗", "💝"][Math.floor(Math.random() * 4)];
+        heart.className =
+          "fixed text-2xl pointer-events-none animate-[confetti_3s_ease-out_forwards]";
         heart.style.left = Math.random() * 100 + "%";
         heart.style.top = Math.random() * 30 + "%";
         document.body.appendChild(heart);
@@ -76,14 +96,14 @@ export default function App() {
           started ? "opacity-0 scale-150 pointer-events-none" : ""
         }`}
       >
-        <div className="text-center animate-floatIn">
-          <div className="text-7xl animate-heartbeat mb-4">💕</div>
+        <div className="text-center animate-[floatIn_1s_ease]">
+          <div className="text-7xl animate-[heartbeat_1.5s_ease_infinite] mb-4">💕</div>
           <h1 className="text-5xl text-white font-bold drop-shadow mb-8">
             Hey You!
           </h1>
           <button
             onClick={() => setStarted(true)}
-            className="px-12 py-5 bg-white text-pink-500 text-2xl font-bold rounded-full shadow-xl animate-glow active:scale-95"
+            className="px-12 py-5 bg-white text-pink-500 text-2xl font-bold rounded-full shadow-xl active:scale-95 animate-[glow_2s_ease_infinite]"
           >
             Tap Here 💝
           </button>
@@ -99,7 +119,7 @@ export default function App() {
               onTouchStart={handleTouchStart}
               onTouchMove={(e) => handleTouchMove(e, index)}
               onTouchEnd={(e) => handleTouchEnd(e, index)}
-              className={`polaroid absolute w-full ${
+              className={`absolute w-full bg-white p-4 pb-16 rounded shadow-2xl cursor-grab transition-all duration-500 ${
                 index !== current ? "pointer-events-none" : ""
               }`}
               style={{
@@ -107,23 +127,33 @@ export default function App() {
                 transform: `rotate(${index * (index % 2 ? -2 : 2)}deg) translateY(${index * 10}px)`,
               }}
             >
-              <div className="polaroid-image-wrapper">
-                <img src={card.img} className="polaroid-image" />
+              <img
+                src={card.img}
+                className="w-full h-[400px] object-cover rounded"
+              />
+              <div className="absolute bottom-4 left-4 right-4 text-center font-bold text-gray-700 rotate-[-2deg]">
+                {card.text}
               </div>
-
-              <div className="polaroid-text">{card.text}</div>
             </div>
           ))}
         </div>
 
-        <div className="instructions">Swipe the memories!! 💕</div>
+        <div className="fixed bottom-12 left-1/2 -translate-x-1/2 text-pink-500 font-bold text-xl animate-bounce">
+          Swipe the memories!! 💕
+        </div>
       </div>
 
       {/* FINAL MESSAGE */}
       {showFinal && (
-        <div className="final-message show">
-          <h2>All done! 💖</h2>
-          <p>I can’t stay without you. Please stay with me.</p>
+        <div className="fixed inset-0 flex items-center justify-center">
+          <div className="text-center scale-100 opacity-100 transition">
+            <h2 className="text-5xl text-pink-500 font-bold drop-shadow mb-4">
+              All done! 💖
+            </h2>
+            <p className="text-2xl text-gray-600">
+              I can’t stay without you. Please stay with me.
+            </p>
+          </div>
         </div>
       )}
     </div>
